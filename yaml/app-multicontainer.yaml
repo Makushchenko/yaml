@@ -1,0 +1,33 @@
+apiVersion: v1                               # Core API version
+kind: Pod                                    # Kubernetes Pod resource
+metadata:
+  name: demo-multi-containers-pod            # Pod name
+  labels:
+    app: demo-multi-containers-pod           # App label value
+spec:
+  containers:
+    - name: demo-nginx                       # First container name
+      image: nginx:latest                    # First container image
+      ports:
+        - name: http                         # Port label
+          containerPort: 80                  # Default nginx port
+          protocol: TCP                      # Network protocol
+      volumeMounts:                          # Mount volumes inside container
+        - name: html                         # Volume name
+          mountPath: /usr/share/nginx/html   # Path for html files
+    - name: demo-debian                      # Second container name
+      image: debian:latest                   # Second container image
+      args:                                  # Command arguments
+        - /bin/sh
+        - -c
+        - echo "Hello from Debian" > /html/index.html && sleep 3600
+      ports:
+        - name: debian-port                  # Port label
+          containerPort: 8080                # Example default port
+          protocol: TCP                      # Network protocol
+      volumeMounts:                          # Mount volumes inside container
+        - name: html                         # Volume name
+          mountPath: /html                   # Shared path
+  volumes:                                   # Volumes for this Pod
+    - name: html                             # Volume name
+      emptyDir: {}                           # Ephemeral storage

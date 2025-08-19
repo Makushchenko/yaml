@@ -1,0 +1,23 @@
+apiVersion: batch/v1                       # Batch API version
+kind: CronJob                              # Kubernetes CronJob resource
+metadata:
+  name: demo-cronjob                       # CronJob name
+  labels:
+    app: demo-cronjob                      # App label value
+spec:
+  schedule: "*/5 * * * *"                  # Run every 5 minutes
+  jobTemplate:                             # Template for Job
+    spec:
+      template:                            # Pod template
+        metadata:
+          labels:
+            app: demo-cronjob              # Pod label value
+        spec:
+          restartPolicy: OnFailure         # Restart on failure
+          containers:
+            - name: demo-cronjob           # Container name
+              image: bash                  # Container image
+              command:                     # Container command
+                - /bin/bash
+                - -c
+                - echo "Hello World"       # Task to execute

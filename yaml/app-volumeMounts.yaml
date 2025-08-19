@@ -1,0 +1,32 @@
+apiVersion: v1                     # Core API version
+kind: Pod                          # Kubernetes Pod resource
+metadata:
+  name: demo-volume-pod            # Pod name
+  labels:
+    app: demo-volume-pod           # App label value
+spec:
+  containers:
+    - name: demo-nginx             # Single container name
+      image: nginx:latest          # Demo image tag
+      ports:
+        - name: http               # Port label
+          containerPort: 80        # Default nginx port
+          protocol: TCP            # Network protocol
+      livenessProbe:               # Check container health
+        httpGet:
+          path: /                  # Root path
+          port: 80                 # HTTP port
+        initialDelaySeconds: 10    # Wait before first check
+        periodSeconds: 5           # Check frequency
+      readinessProbe:              # Check container readiness
+        httpGet:
+          path: /                  # Root path
+          port: 80                 # HTTP port
+        initialDelaySeconds: 5     # Wait before first check
+        periodSeconds: 5           # Check frequency
+      volumeMounts:                # Mount volumes into container
+        - name: demo-volume        # Volume name
+          mountPath: /usr/share/nginx/html # Mount path
+  volumes:                         # Volumes for this Pod
+    - name: demo-volume            # Volume name
+      emptyDir: {}                 # Ephemeral empty directory

@@ -1,0 +1,25 @@
+apiVersion: v1                              # Core API version
+kind: Pod                                   # Kubernetes Pod resource
+metadata:
+  name: demo-configmap-pod                  # Pod name
+  labels:
+    app: demo-configmap-pod                 # App label value
+spec:
+  restartPolicy: Never                      # Do not restart Pod
+  containers:
+    - name: demo-configmap                  # Single container name
+      image: redis:latest                   # Demo image tag
+      imagePullPolicy: Always               # Always pull image
+      env:                                  # Environment variables
+        - name: DEMO_CONFIG                 # Env var name
+          valueFrom:
+            configMapKeyRef:                # Reference to ConfigMap
+              name: demo-configmap          # ConfigMap name
+              key: demo-key                 # ConfigMap key
+      volumeMounts:                         # Mount volumes inside container
+        - name: demo-configmap-volume       # Volume name
+          mountPath: /etc/demo-configmap    # Path inside container
+  volumes:                                  # Volumes for this Pod
+    - name: demo-configmap-volume           # Volume name
+      configMap:                            # ConfigMap volume source
+        name: demo-configmap                # ConfigMap name

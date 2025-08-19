@@ -1,0 +1,29 @@
+apiVersion: batch/v1                          # Batch API version
+kind: Job                                     # Kubernetes Job resource
+metadata:
+  name: demo-job                              # Job name
+  labels:
+    app: demo-job                             # App label value
+spec:
+  backoffLimit: 0                             # No retries on failure
+  template:                                   # Pod template for Job
+    metadata:
+      labels:
+        app: demo-job                         # Pod label value
+    spec:
+      restartPolicy: Never                    # Do not restart Pod
+      containers:
+        - name: demo-cloud-sdk                # Container name
+          image: google/cloud-sdk:275.0.0-alpine # Container image
+          command:                            # Container command
+            - /bin/sh
+            - -c
+            - gsutil ls gs://demo-bucket      # Example gsutil command
+          volumeMounts:                       # Mount volumes inside container
+            - name: demo-job-disk             # Volume name
+              mountPath: /data                # Path inside container
+      volumes:                                # Volumes for this Pod
+        - name: demo-job-disk                 # Volume name
+          gcePersistentDisk:                  # GCE persistent disk source
+            pdName: demo-job-disk             # Pre-provisioned disk name
+            fsType: ext4                      # Filesystem type
